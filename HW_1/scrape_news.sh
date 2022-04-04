@@ -1,5 +1,7 @@
 #!/bin/bash
 
+
+> results.csv
 > final_result.txt
 > result.txt
 > temp_result.txt
@@ -43,3 +45,11 @@ paste result.txt temp_result.txt >> final_result.txt
 sed -i 's/[[:space:]],/,/' final_result.txt
 sed -i 's/[[:blank:]],/,/' final_result.txt
 sed -i 's/[[:space:]]Bennett,[[:space:]]0,[[:space:]]Netanyahu,[[:space:]]0/-/' final_result.txt
+
+cat final_result.txt | wc -l > num_of_lines.txt
+
+cat final_result.txt >> num_of_lines.txt
+
+cat num_of_lines.txt > final_result.txt
+
+cat final_result.txt >> results.csv
