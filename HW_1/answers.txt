@@ -1,3 +1,8 @@
-a: it would have take a lot of time to find a speciphic word by hand in handreds of articles, but it took much more time to write the script in bash (about 14 hours).
+1.It would have taken a lot of time, for this particular assignment it may be a reasonable amount of time,
+but for bigger volumes of data to look at we wouldn't be able to finish in a lifetime.
 
-b: because the script is very easy to modify, we can use is to find statistics on say, whats the burning topic right now, we
+2.Our conclusion is that a program of this kind is best suited for situations when we need to cover big volumes of data in order to 
+look for specific information (key words,stats,targeted inormation).
+
+3.For repeating the program every hour, we would need to add a watch command that allows to execute the program priodically, to avoid using already used articles 
+we must store the used articles in a file and compare it with the results of our search.
