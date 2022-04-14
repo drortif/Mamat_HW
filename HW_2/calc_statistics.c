@@ -25,8 +25,7 @@ void bubblesort(int* grades, int size) {
 
 float average(int* grades, int size) {
     int sum = 0;
-    for (int i = 0; i < size; i++)
-    {
+    for (int i = 0; i < size; i++) {
         sum += grades[i];
     }
 
@@ -46,8 +45,7 @@ int median(int* grades, int size) {
 
 float pass_percent(int* grades, int size) {
     int pass = 0;
-    for (int i = 0; i < size; i++)
-    {
+    for (int i = 0; i < size; i++) {
         if (grades[i] >= 55) {
             pass++;
         }
@@ -59,20 +57,20 @@ float pass_percent(int* grades, int size) {
 
 void print_histogram(int* grades, int size, FILE* fp_w) {
     int histogram[100] = { 0 };
-    for (int i = 0; i < size; i++)
-    {
+    for (int i = 0; i < size; i++) {
         histogram[grades[i] - 1] ++;
 
     }
-    for (int i = 0; i < 10; i++)
-    {
-        for (int j = 0; j < 10; j++)
-        {
-            fprintf(fp_w, "%d ", histogram[(10 * i) + j]);
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 10; j++) {
+
+            fprintf(fp_w, "%d", histogram[(10 * i) + j]);
+
+            if(j != 9) {
+            	fprintf(fp_w, " ");
+            }
         }
-        if (i < 9) {
-            fprintf(fp_w, "\n");
-        }
+        	fprintf(fp_w, "\n");
     }
 }
 
@@ -103,7 +101,8 @@ int main(int argc, char* argv[]) {
 
     fprintf(fp_w, ", min grade = %d\n", grades[0]);
 
-    fprintf(fp_w, "pass rate = %.2f%%\n", pass_percent(grades, num_of_students));
+    fprintf(fp_w, "pass rate = %.2f%%\n",
+    		pass_percent(grades, num_of_students));
 
     print_histogram(grades, num_of_students, fp_w);
 

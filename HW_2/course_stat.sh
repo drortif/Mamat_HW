@@ -20,23 +20,17 @@ fi
 mkdir $1_stat
 
 #prints the second column to a temp txt file without the word "grades"
-awk '{print $2}' $1.txt | tail +2 > grades.txt
-
-#cwd is the one we created
-mv grades.txt $1_stat
-
-#move the c file
-cp main.c $1_stat
-
-cd $1_stat
+awk '{print $2}' $1.txt | tail +2 > ./$1_stat/grades.txt
 
 #finds out the num of studets
-num_of_students=$(wc -l < grades.txt)
+num_of_students=$(wc -l < ./$1_stat/grades.txt)
 
 #compiles the c prog with the grades and nym of students as args
-gcc -g -Wall main.c -o prog.exe
+gcc -g -Wall calc_statistics.c -o prog.exe
 
-./prog.exe grades.txt $num_of_students
+./prog.exe ./$1_stat/grades.txt $num_of_students
 
 #prints the result created by the c prog
 cat course_statistics.txt
+
+mv course_statistics.txt $1_stat
