@@ -1,31 +1,18 @@
-# Welcomre to Mamat, 044101
-#
-# This is the project's Makefile. It contains the instructions for compiling
-# the projects C files, and then link the generated objects into an executable.
-# This simple file will compile "main.c" to "main.o" and then link it (with C
-# runtime library) to the executable "prog.exe".
-#
-# To compile, open the terminal in the folder that contains
-# this file and run "make".
-#
-# To clean, open the terminal in the folder that contains
-# this file and run "make clean".
-#
-# All eclipse projects in this machine are under /home/mamat/Documents/
+CC=gcc
+CCLINK = $(CC)
+CFLAGS= -g -Wall -std=c99 -fpic
+EXEC = prog.exe
+RM = *.o *libgrades.so
 
-CC     = gcc
-CFLAGS = -Wall -g -std=c99
-OBJS   = main.o
+$(EXEC):libgrades.so
+	$(CCLINK) libgrades.so -so $(EXEC) 
 
+libgrades.so: grades.o 
+	$(CC) -shared grades.o -o libgrades.so 
 
-prog.exe: $(OBJS)
-	$(CC) -o $@ $^
+grades.o: grades.c grades.h linked-list.h 
+	$(CC) $(CFLAGS)  -c grades.c
 
-%.o: %.cpp
-	$(CC) -c $(CFLAGS) $(CXXFLAGS) -o $@ $<
-
-%.o: %.c
-	$(CC) -c $(CFLAGS) -o $@ $<
 
 clean:
-	rm -fr *.exe $(OBJS)
+	rm -rf $(RM)	
