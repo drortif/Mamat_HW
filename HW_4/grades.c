@@ -6,7 +6,7 @@
 #include "grades.h"
 #include "linked-list.h"
 
-/* Defined elsewhere */
+#define FAIL -1
 
 
  struct course {
@@ -25,31 +25,51 @@ struct grades{
 	struct list * students_list;
 };
 
+int student_clone (void*stud,void**output);
+void student_destroy(void*students);
+void student_destroy(void*students);
+int course_clone(void*cuourse,void**output);
+
+
 int student_clone (void*stud,void**output){
 	struct student *Student = (struct student *) stud;
 	*output = (struct student *) malloc (sizeof (Student));
 	if (*output == NULL){
-		return -1;
+		return FAIL;
 	}
 	return 0;
 }
-void student_destroy(void*students);
-int course_clone(void*cuourse,void**output);
-void course_destroy(void*course);
+void student_destroy(void*students){
+	free (students);
+}
+
+int course_clone(void*course,void**output){
+	struct course *Course = (struct course *) course;
+		*output = (struct course *) malloc (sizeof (Course));
+		if (*output == NULL){
+			return FAIL;
+		}
+		return 0;
+	}
+
+void course_destroy(void*course){
+	free(course);
+}
 
 /**
  * @brief Initializes the "grades" data-structure.
  * @returns A pointer to the data-structure, of NULL in case of an error
  */
-struct grades* grades_init(){
+struct grades* grades_init(int (*student_clone)(void* ,void** ),
+		void (*student_destroy)(void* )){
 	struct grades *grd =(struct grades*) malloc (sizeof(struct grades));
 	if (!grd){
-		return -1;
+		return NULL;
 	}
 	grd->students_list = list_init(student_clone,student_destroy);
 	if(grd->students_list == NULL){
 		free(grd);
-		return -1;
+		return NULL;
 	}
 
 return grd;
@@ -71,29 +91,30 @@ void grades_destroy(struct grades *grades){
 int grades_add_student(struct grades *grades, const char *name, int id){
 	struct student *current_student;
 	current_student->id = id;
-	name = (char*) malloc (strlen (current_student->student_name)+1);
+	current_student->student_name = (char*) malloc (strlen (name)+1);
 	if(! name){
-		return -1;
+		return FAIL;
 	}
 	current_student->student_name = name;
 	if ((grades == NULL) ||(grades->students_list == NULL)){
 		free(name);
-		return -1;
+		return FAIL;
 	}
-	if(!(list_push_back(grades->students_list,current_student))){
-		free(name);
-		return -1;
-	}
+
 	struct iterator* current_node =  list_begin(grades);
 	while(current_node){
 		if ((current_student->id ==
 				(((struct student *)(list_get(current_node)))->id))){
 			free(name);
-			return -1;
+			return FAIL;
 		}
 		current_node=list_next (current_node);
 	}
-	free(name);
+	if(!(list_push_back(grades->students_list,current_student))){
+			free(name);
+			return FAIL;
+	}
+	current_student->course_list = list_init (course_clone,course_destroy);
 	return 0;
 }
 
@@ -109,15 +130,15 @@ int grades_add_grade(struct grades *grades,
                      int id,
                      int grade){
 	if ((grades == NULL) ||(grades->students_list == NULL)){
-			return -1;
+			return FAIL;
 	}
 	if ((grade < 0) ||(grade > 100)){
-		return -1;
+		return FAIL;
 	}
 	struct course* current_course;
 	name = (char*) malloc (strlen (current_course->course_name)+1);
 	if(!name){
-		return -1;
+		return FAIL;
 	}
 	current_course->course_name = name;
 	current_course->grade = grade;
@@ -132,7 +153,7 @@ int grades_add_grade(struct grades *grades,
 			current_node=list_next (current_node);
 		}
 		free(name);
-	return -1;
+	return FAIL;
 
 }
 
@@ -160,7 +181,7 @@ float grades_calc_avg(struct grades *grades, int id, char **out){
 	int courses = 0;
 	if ((grades == NULL) ||(grades->students_list == NULL)){
 
-				return -1;
+				return FAIL;
 		}
 	struct iterator* current_node =  list_begin(grades->students_list);
 		while(current_node){
@@ -169,7 +190,7 @@ float grades_calc_avg(struct grades *grades, int id, char **out){
 				*out = (char*) malloc (strlen (((struct student *)
 						(list_get(current_node)))->student_name)+1);
 				if (!(*out)){
-					return -1;
+					return FAIL;
 				}
 				*out = ((struct student *)
 						(list_get(current_node)))->student_name;
@@ -190,7 +211,7 @@ float grades_calc_avg(struct grades *grades, int id, char **out){
 			}
 		if(!student_exist){
 			free(*out);
-			return -1;
+			return FAIL;
 		}
 		if (!courses){
 			return 0;
@@ -210,7 +231,7 @@ float grades_calc_avg(struct grades *grades, int id, char **out){
 int grades_print_student(struct grades *grades, int id){
 	if ((grades == NULL) ||(grades->students_list == NULL)){
 
-					return -1;
+					return FAIL;
 			}
 	int student_exist = 0;
 	struct iterator* current_node =  list_begin(grades->students_list);
@@ -237,7 +258,7 @@ int grades_print_student(struct grades *grades, int id){
 				current_node=list_next (current_node);
 			}
 		if(! student_exist){
-			return -1;
+			return FAIL;
 		}
 
 		return 0;
@@ -258,7 +279,7 @@ int grades_print_student(struct grades *grades, int id){
 int grades_print_all(struct grades *grades){
 	if ((grades == NULL) ||(grades->students_list == NULL)){
 
-					return -1;
+					return FAIL;
 			}
 	struct iterator* current_node =  list_begin(grades->students_list);
 			while(current_node){
