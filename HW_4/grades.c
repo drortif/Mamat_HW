@@ -27,33 +27,74 @@ struct grades{
 
 int student_clone (void*stud,void**output);
 void student_destroy(void*students);
-void student_destroy(void*students);
+void course_destroy(void*course);
 int course_clone(void*cuourse,void**output);
 
 
-int student_clone (void*stud,void**output){
-	struct student *Student = (struct student *) stud;
-	*output = (struct student *) malloc (sizeof (Student));
-	if (*output == NULL){
-		return FAIL;
-	}
+int student_clone (void*student,void**output){
+	struct student *out_student = (struct student *) malloc (sizeof(struct student));
+		if (out_student == NULL){
+			return FAIL;
+		}
+		struct student *local_student = (struct student*) student;
+
+
+			out_student->student_name =(char*)malloc(strlen(local_student->student_name));
+			if(out_student->student_name==NULL){
+				return FAIL;
+			}
+			strcpy(out_student->student_name,local_student->student_name);
+			out_student->id = local_student->id;
+			out_student->course_list = list_init(course_clone,course_destroy);
+			if(out_student->course_list == NULL){
+				return FAIL;
+			}
+			struct iterator* current_course = list_begin (local_student->course_list);
+			while(current_course){
+				if((list_push_back(out_student->course_list,list_get(current_course)))!=0);
+				current_course = list_next(current_course);
+			}
+
+
+			*output = out_student;
+			free(out_student);
+			free(out_student->student_name);
+
+			return 0;
 	return 0;
 }
 void student_destroy(void*students){
-	free (students);
+	struct student * temp_student = (struct student *) students;
+	free(temp_student->student_name);
+	free(temp_student);
+	free(temp_student->course_list);
+
 }
 
 int course_clone(void*course,void**output){
-	struct course *Course = (struct course *) course;
-		*output = (struct course *) malloc (sizeof (Course));
-		if (*output == NULL){
+	struct course *out_course = (struct course *) malloc (sizeof(struct course));
+	if (out_course == NULL){
+		return FAIL;
+	}
+	struct course *local_course = (struct course*) course;
+
+
+		out_course->course_name =(char*)malloc(strlen(local_course->course_name));
+		if(out_course->course_name==NULL){
 			return FAIL;
 		}
+		strcpy(out_course->course_name,local_course->course_name);
+		out_course->grade = local_course->grade;
+		*output = out_course;
+		free(out_course);
+		free(out_course->course_name);
 		return 0;
 	}
 
 void course_destroy(void*course){
-	free(course);
+	struct course * temp_course = (struct course *) course;
+	free(temp_course->course_name);
+	free(temp_course);
 }
 
 /**
@@ -89,32 +130,49 @@ void grades_destroy(struct grades *grades){
  * the same "id" already exists in "grades"
  */
 int grades_add_student(struct grades *grades, const char *name, int id){
-	struct student *current_student;
-	current_student->id = id;
-	current_student->student_name = (char*) malloc (strlen (name)+1);
-	if(! name){
+	struct student *current_student = (struct student *)malloc(sizeof(struct student));
+	if(!current_student){
 		return FAIL;
 	}
-	current_student->student_name = name;
+	current_student->id = id;
+	current_student->student_name = (char*) malloc (strlen (name)+1);
+	if(! (current_student->student_name)){
+		free(current_student);
+		return FAIL;
+	}
+	strcpy(current_student->student_name,name);
 	if ((grades == NULL) ||(grades->students_list == NULL)){
-		free(name);
+		free(current_student->student_name);
+		free(current_student);
 		return FAIL;
 	}
 
-	struct iterator* current_node =  list_begin(grades);
+	struct iterator* current_node =  list_begin(grades->students_list);
 	while(current_node){
 		if ((current_student->id ==
 				(((struct student *)(list_get(current_node)))->id))){
-			free(name);
+			free(current_student->student_name);
+			free(current_student);
 			return FAIL;
 		}
 		current_node=list_next (current_node);
 	}
-	if(!(list_push_back(grades->students_list,current_student))){
-			free(name);
+	current_student->course_list = list_init (course_clone,course_destroy);
+	if((current_student->course_list)==NULL){
+		free(current_student->student_name);
+		free(current_student);
+		return FAIL;
+	}
+	int success= list_push_back(grades->students_list,(void*)current_student);
+	if(!success){
+			free(current_student->student_name);
+			free(current_student);
+			list_destroy(current_student->course_list);
 			return FAIL;
 	}
-	current_student->course_list = list_init (course_clone,course_destroy);
+	free(current_student->student_name);
+	free(current_student);
+	list_destroy(current_student->course_list);
 	return 0;
 }
 
@@ -135,24 +193,23 @@ int grades_add_grade(struct grades *grades,
 	if ((grade < 0) ||(grade > 100)){
 		return FAIL;
 	}
-	struct course* current_course;
-	name = (char*) malloc (strlen (current_course->course_name)+1);
-	if(!name){
+	struct course* current_course=NULL;
+	current_course->course_name = (char*) malloc (strlen (name)+1);
+	if(!(current_course->course_name)){
 		return FAIL;
 	}
-	current_course->course_name = name;
+	strcpy(current_course->course_name, name);
 	current_course->grade = grade;
 	struct iterator* current_node =  list_begin(grades->students_list);
 		while(current_node){
 			if (id == (((struct student *)(list_get(current_node)))->id)){
 				if(!(list_push_back(((struct student *)
-					(list_get(current_node)))->course_list,current_course)));
-				free(name);
+					(list_get(current_node)))->course_list,(void*)current_course)));
+				free(current_course->course_name);
 				return 0;
 			}
 			current_node=list_next (current_node);
 		}
-		free(name);
 	return FAIL;
 
 }
@@ -304,9 +361,4 @@ int grades_print_all(struct grades *grades){
 
 					}
 			return 0;
-}
-
-int main(int argc, char **argv) {
-	printf("Hello World\n");
-	return 0;
 }
