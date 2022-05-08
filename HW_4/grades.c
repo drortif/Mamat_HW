@@ -34,14 +34,16 @@ int course_clone(void*course,void**output); //spelling
 
 
 int student_clone (void*student,void**output){ //element in function calling
-	struct student *out_student = (struct student *) malloc (sizeof(struct student));
+	struct student *out_student =
+			(struct student *) malloc (sizeof(struct student));
 		if (out_student == NULL){
 			return FAIL;
 		}
 		struct student *local_student = (struct student*) student;
 
 
-			out_student->student_name =(char*)malloc(strlen(local_student->student_name)+1);
+			out_student->student_name =(char*)
+					malloc(strlen(local_student->student_name)+1);
 			if(out_student->student_name==NULL){
 				return FAIL; //free struct allocation
 			}
@@ -70,14 +72,16 @@ void student_destroy(void*students){ //element in function calling?
 }
 
 int course_clone(void*course,void**output){ //element in function calling?
-	struct course *out_course = (struct course *) malloc (sizeof(struct course));
+	struct course *out_course = (struct course *)
+			malloc (sizeof(struct course));
 	if (out_course == NULL){
 		return FAIL;
 	}
 	struct course *local_course = (struct course*) course;
 
 
-		out_course->course_name =(char*)malloc(strlen(local_course->course_name)+1);
+		out_course->course_name =(char*)malloc
+				(strlen(local_course->course_name)+1);
 		if(out_course->course_name==NULL){
 			free(out_course);
 			return FAIL;
@@ -128,7 +132,8 @@ void grades_destroy(struct grades *grades){
  * the same "id" already exists in "grades"
  */
 int grades_add_student(struct grades *grades, const char *name, int id){
-	struct student *current_student = (struct student *)malloc(sizeof(struct student));
+	struct student *current_student = (struct student *)
+			malloc(sizeof(struct student));
 	if(!current_student){
 		return FAIL;
 	}
@@ -156,7 +161,8 @@ int grades_add_student(struct grades *grades, const char *name, int id){
 		}
 		current_node=list_next (current_node);
 	}
-	// if the id is not already in the list, we initite a node with a new student
+	// if the id is not already in the list,
+	//we initite a node with a new student
 	current_student->course_list = list_init (course_clone,course_destroy);
 	if((current_student->course_list)==NULL){
 		free(current_student->student_name);
@@ -193,7 +199,8 @@ int grades_add_grade(struct grades *grades,
 	if ((grade < 0) ||(grade > 100)){
 		return FAIL;
 	}
-	struct course* current_course=(struct course*) malloc (sizeof(struct course));
+	struct course* current_course=(struct course*)
+			malloc (sizeof(struct course));
 	if(current_course == NULL){
 		return FAIL;
 	}
@@ -209,10 +216,13 @@ int grades_add_grade(struct grades *grades,
 			//checks if the given student already exists
 			if (id == (((struct student *)(list_get(current_student)))->id)){
 				//checks if the given course already exists
-				struct iterator * current_course_node = list_begin(((struct student*)(list_get(current_student)))->course_list);
+				struct iterator * current_course_node =
+						list_begin(((struct student*)
+								(list_get(current_student)))->course_list);
 
 				while(current_course_node){
-				if(!(strcmp(((struct course*)( list_get (current_course_node)))->course_name,name))){
+				if(!(strcmp(((struct course*)( list_get
+						(current_course_node)))->course_name,name))){
 
 				free(current_course->course_name);
 				free(current_course);
@@ -221,7 +231,8 @@ int grades_add_grade(struct grades *grades,
 				current_course_node=list_next (current_course_node);
 				}
 				//if the current course does not exist we add new node
-				if(!(list_push_back( ((struct student *)(list_get (current_student)))->course_list,current_course))){
+				if(!(list_push_back( ((struct student *)(list_get
+						(current_student)))->course_list,current_course))){
 
 
 					free(current_course->course_name);
@@ -267,14 +278,16 @@ float grades_calc_avg(struct grades *grades, int id, char **out){
 	struct iterator* current_student_node =  list_begin(grades->students_list);
 		while(current_student_node){
 			//looking for student with the given id
-			if (id == ((struct student *)(list_get(current_student_node)))->id){
+			if (id == ((struct student *)
+					(list_get(current_student_node)))->id){
 				student_exist=1;
 				*out = (char*) malloc (strlen (((struct student *)
 						(list_get(current_student_node)))->student_name)+1);
 				if (!(*out)){
 					return FAIL;
 				}
-				strcpy(*out, ((struct student *)(list_get(current_student_node)))->student_name);
+				strcpy(*out, ((struct student *)
+						(list_get(current_student_node)))->student_name);
 				struct iterator* current_course_node =  list_begin
 						(((struct student *)
 								(list_get(current_student_node)))->course_list);
@@ -282,7 +295,8 @@ float grades_calc_avg(struct grades *grades, int id, char **out){
 									sum += ((struct course *)
 										(list_get(current_course_node)))->grade;
 									courses ++;
-									current_course_node=list_next (current_course_node);
+									current_course_node=list_next
+											(current_course_node);
 
 									}
 
@@ -319,13 +333,20 @@ int grades_print_student(struct grades *grades, int id){
 		while(current_student){
 			if (id == ((struct student *)(list_get(current_student)))->id){
 				student_exist = 1;
-			printf("%s %d:",((struct student *)(list_get(current_student)))->student_name,((struct student *)(list_get(current_student)))->id);
+			printf("%s %d:",((struct student *)
+					(list_get(current_student)))->student_name,
+					((struct student *)(list_get(current_student)))->id);
 				struct iterator* current_course_node =  list_begin
 						(((struct student *)
 								(list_get(current_student)))->course_list);
 							while(current_course_node){
-								printf(" %s %d",((struct course *)(list_get(current_course_node)))->course_name,	((struct course *)(list_get(current_course_node)))->grade);
-								current_course_node=list_next (current_course_node);
+								printf(" %s %d",((struct course *)
+										(list_get(current_course_node)))
+										->course_name,	((struct course *)
+												(list_get(current_course_node)))
+												->grade);
+								current_course_node=list_next
+										(current_course_node);
 								if(current_course_node !=NULL){
 									printf(",");
 								}
