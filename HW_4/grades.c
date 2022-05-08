@@ -27,10 +27,10 @@ struct grades{
 
 //define all functions
 
-int student_clone (void*stud,void**output); //spelling
+int student_clone (void*student,void**output); //spelling
 void student_destroy(void*students);
 void course_destroy(void*course);
-int course_clone(void*cuourse,void**output); //spelling
+int course_clone(void*course,void**output); //spelling
 
 
 int student_clone (void*student,void**output){ //element in function calling
@@ -221,20 +221,20 @@ int grades_add_grade(struct grades *grades,
 				current_course_node=list_next (current_course_node);
 				}
 				//if the current course does not exist we add new node
-				if(list_push_back( ((struct student *)(list_get (current_student)))->course_list,current_course)){
+				if(!(list_push_back( ((struct student *)(list_get (current_student)))->course_list,current_course))){
 
 
 					free(current_course->course_name);
 					free(current_course);
 
-				return FAIL;
+				return 0;
 				}
 			}
 			current_student=list_next (current_student);
 		}
 		free(current_course->course_name);
 		free(current_course);
-	return 0;
+	return FAIL;
 
 }
 
@@ -324,10 +324,11 @@ int grades_print_student(struct grades *grades, int id){
 						(((struct student *)
 								(list_get(current_student)))->course_list);
 							while(current_course_node){
-								printf(" %s %d,",((struct course *)(list_get(current_course_node)))->course_name,	((struct course *)(list_get(current_course_node)))->grade);
+								printf(" %s %d",((struct course *)(list_get(current_course_node)))->course_name,	((struct course *)(list_get(current_course_node)))->grade);
 								current_course_node=list_next (current_course_node);
+								if(current_course_node !=NULL){
 									printf(",");
-
+								}
 									}
 				}
 				current_student=list_next (current_student);
@@ -366,13 +367,16 @@ int grades_print_all(struct grades *grades){
 							(((struct student *)
 									(list_get(current_node)))->course_list);
 								while(current_course_node){
-									printf(" %s %d,",
+									printf(" %s %d",
 										((struct course *)
 								(list_get(current_course_node)))->course_name,
 										((struct course *)
 									(list_get(current_course_node)))->grade);
 										current_course_node=
 												list_next (current_course_node);
+										if(current_course_node !=NULL){
+											printf(",");
+																		}
 
 										}
 									printf("\n");
