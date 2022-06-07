@@ -40,6 +40,6 @@ public:
 
     bool match_value(String ip_address) const;
 
-}
+};
 
 #endif
