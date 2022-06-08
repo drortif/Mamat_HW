@@ -20,6 +20,7 @@ bool Port::set_value(String ports_range){
 //splits range to upper and lower bounds
     ports_range.split("-", &(bounds),&(bounds_size));
     if((bounds_size != VALID_NUM_OF_BOUNDS) || (bounds==NULL)){
+    	delete [] bounds;
         return false;
     }
 
@@ -28,12 +29,14 @@ bool Port::set_value(String ports_range){
 
 //check if bounds value is valid
     if((lower_bound < 0) || (upper_bound > MAX_PORT) || (upper_bound < lower_bound)){
+    	delete [] bounds;
         return false;
     }
 
 //set the value to the boundries
     min_port=lower_bound;
     max_port=upper_bound;
+    delete [] bounds;
     return true;
 }
 

@@ -7,8 +7,8 @@
 #define VALID_MASK_SIZE 2 /* -1? */
 #define WORD_SIZE 32
 #define VALID_IP_COMP_SIZE 4
-#define DIGIT 10
-#define RIGHT_MOST_COMPONENT 3
+#define COMP_SIZE 8
+
 
 
 //constructor implementation, only initiats.
@@ -31,6 +31,7 @@ bool IP::set_value(String mask){
 //checks if the rule (mask) is valid
     mask.split("/", &(mask_components), &(mask_components_size));
     if((mask_components_size!=VALID_MASK_SIZE) || (mask_components==NULL)){
+    	delete [] mask_components;
         return false;
     }
 
@@ -41,26 +42,32 @@ bool IP::set_value(String mask){
 	num_of_bits_mask=(mask_components[1].trim()).to_integer();
 //checks that the bits part of the rule is valid
     if((num_of_bits_mask<0) || (num_of_bits_mask>WORD_SIZE)){
+       	delete [] mask_components;
         return false;
     }
 //splits ip part and checks if valid
     (mask_components[0]).split(".", &(ip_mask_components), &(ip_mask_components_size));
-    if((ip_mask_components_size!=VALID_IP_COMP_SIZE) || (mask_components==NULL)){
+    if((ip_mask_components_size!=VALID_IP_COMP_SIZE) || (ip_mask_components==NULL)){
+    	delete [] mask_components;
+    	delete [] ip_mask_components;
         return false;
     }
 
 //makes a big ip integer out of ip_mask_components
-    for(int i=0; i< (int)ip_mask_components_size; i++){
-    /*math?*/    ip_mask=ip_mask+(pow(DIGIT,(VALID_IP_COMP_SIZE*(RIGHT_MOST_COMPONENT-i)))*((ip_mask_components[i]).to_integer()));
-    }
+	for(int i=0;i<VALID_IP_COMP_SIZE;i++){
+		ip_mask =ip_mask+(ip_mask_components[i].to_integer() << (COMP_SIZE*(VALID_IP_COMP_SIZE-1-i)));
+	}
 
 //makes a bits-mask
     bits_mask = bits_mask >> (WORD_SIZE-num_of_bits_mask);
+    bits_mask = bits_mask << (WORD_SIZE-num_of_bits_mask);
 
 //sets range
-    min_ip = ip_mask & (!(bits_mask));
-    max_ip = min_ip|bits_mask;
+    min_ip = ip_mask & bits_mask;
+    max_ip = min_ip|(!bits_mask);
 
+	delete [] mask_components;
+   	delete [] ip_mask_components;
     return true;
 }
 
@@ -74,13 +81,16 @@ bool IP :: match_value(String ip_address) const{
 //makes a big ip integer out of ip_adress, and checks if valid
     ip_address.split(".", &(ip_components),&(ip_components_size));
     if((ip_components_size != VALID_IP_COMP_SIZE) && (ip_components==NULL)){
+    	delete [] ip_components;
         return false;
     }
-    for(size_t i=0; i<ip_components_size; i++){
-    /*math?*/    ip_value=ip_value+(pow(DIGIT,(VALID_IP_COMP_SIZE*(RIGHT_MOST_COMPONENT-i)))*((ip_components[i]).to_integer()));
-    }
+    
+    for(int i=0;i<VALID_IP_COMP_SIZE;i++){
+		ip_value =ip_value+(ip_components[i].to_integer() << (COMP_SIZE*(VALID_IP_COMP_SIZE-1-i)));
+	}
 
 //returns true if in range
+	delete [] ip_components;
     return ((ip_value >= min_ip) && (ip_value<=max_ip));
 
 }

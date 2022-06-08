@@ -11,16 +11,15 @@
 
 // default constructor
 String::String() {
-	length = 0;
-	data =  new char[length];
+	this->length = 0;
+	this->data =  new char[0];
 }
 
 // copy constructor
 String::String(const String& str)
 {
-	length = str.length;
-	data = new char[length + 1];
-	memset(data, 0, length+1);
+	this->length = str.length;
+	this->data = new char[length + 1];
 
 	strcpy(data, str.data);
 
@@ -28,16 +27,15 @@ String::String(const String& str)
 
 String::String(const char* str)
 {
-	length = strlen(str);
-	data = new char[length + 1];
-	memset(data, 0, length + 1);
+	this->length = strlen(str);
+	this->data = new char[length + 1];
 
 	strcpy(data, str);
 }
 
 String::~String()
 {
-	delete data;
+	delete[] this->data;
 }
 
 String& String::operator=(const String& rhs)
@@ -47,7 +45,7 @@ String& String::operator=(const String& rhs)
 		delete[] this->data;
 	}
 	this->length = rhs.length;
-	this->data =new char[rhs.length +1];
+	this->data = new char[rhs.length +1];
 	strcpy(this->data,rhs.data);
 	
 	}
@@ -88,7 +86,7 @@ void String::split(const char* delimiters, String** output, size_t* size) const
 	return;
 	}
 
-	int output_size = 1;
+	size_t output_size = 1;
 	for (size_t i = 0; i < strlen(delimiters); i++) {
 		for (size_t j = 0; j < this->length; j++) {
 				if (this->data[j] == delimiters[i]) {
@@ -96,7 +94,7 @@ void String::split(const char* delimiters, String** output, size_t* size) const
 			}
 		}
 	}
-	*output = new String[output_size];
+	*output = new String[output_size+1];
 	
 	*size = 0;
 	size_t position = 0;
@@ -108,8 +106,8 @@ void String::split(const char* delimiters, String** output, size_t* size) const
 				if (pos == this->length -position) {
 					break;
 				}
-				token.length = pos-3 ;
-				strncpy(token.data, &(this->data[position]), token.length+3);
+				token.length = pos ;
+				strncpy(token.data, &(this->data[position]), token.length);
 				**output = token;
 				(*output)++;
 				(*size)++;
@@ -119,10 +117,10 @@ void String::split(const char* delimiters, String** output, size_t* size) const
 		
 	}
 	String last_token;
-	last_token.length = this->length - position-3;
-	strncpy(last_token.data, &(this->data[position]), last_token.length+3);
+	last_token.length = this->length - position;
+	strncpy(last_token.data, &(this->data[position]), last_token.length);
 	**output = (String(last_token));
-	(*output)--;
+	(*output) -= (output_size-1);
 	(*size)++;
 	
 				
@@ -145,18 +143,18 @@ String String::trim() const
 	String b(str);
 	delete[]str;
 	return b;*/
-	char* start = this->data+3;
+	char* start = this->data;
 	while (*start == ' ' ||*start == '\n'||*start == '\t'||*start == '\f'||*start == '\r'||*start == '\v')
 	{
 		start++;
 	}
-	char* end = this->data+3 + this->length -1;
+	char* end = this->data+this->length -1; 
 	while (*end == ' ' ||*end == '\n'||*end == '\t'||*end == '\f'||*end == '\r'||*end == '\v') {
 		end--;
 	}
 	String a;
 	a.length = end - start + 1;
-	strncpy(a.data, start, a.length+3);
+	strncpy(a.data, start, a.length);
 	return a; 
 }
 		
