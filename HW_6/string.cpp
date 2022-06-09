@@ -82,9 +82,6 @@ bool String::equals(const char* rhs) const
 
 void String::split(const char* delimiters, String** output, size_t* size) const
 {
-	if (output==NULL){
-	return;
-	}
 
 	size_t output_size = 1;
 	for (size_t i = 0; i < strlen(delimiters); i++) {
@@ -94,6 +91,15 @@ void String::split(const char* delimiters, String** output, size_t* size) const
 			}
 		}
 	}
+		if (output==NULL){
+			if(this->length==0){
+				*size=0;
+				return;
+			}
+		*size=(output_size);
+		return ;
+	}
+
 	*output = new String[output_size+1];
 	
 	*size = 0;
