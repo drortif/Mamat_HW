@@ -4,18 +4,23 @@
 
 >packets_passed.txt
 #get the packets and clean whitespaces
-packets=$((cat <&0)|sed 's/\ //g')
+PACKETS=$(cat| tr -d "[:blank:]")
 
 #clean the rules from comments'whitespaces and empty lines
-rules_cleaned=$(cat "$1" | sed "s/"\#.*"/""/g" | sed "s/\ //g" | sed "/^$/d")
+RULES=$(grep -o "^[^#].*" $1 | sed 's/#.*/ /' | tr -d "[:blank:]" | sed '/^$/d')
 
-
-for line in $rules_cleaned
-
+while read -r RULE;
 do
+	PORTDST=(echo $RULE | grep -o "dst-port
+	PORTSRC
+	IPDST
+	IPSRC
+#for line in $rules_cleaned
 
-echo $packets > matching_packets.txt
-readarray -d,-t array_of_rules <<<"$line"
+#do
+
+#echo $packets > matching_packets.txt
+#readarray -d,-t array_of_rules <<<"$line"
 
 for rule in ${array_of_rules[@]}
 

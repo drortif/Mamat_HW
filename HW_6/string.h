@@ -20,7 +20,7 @@ public:
      */
     String(const String &str);
 
-    /**
+    /**  
      * @brief Initiates a string from char array
      */
     String(const char *str);

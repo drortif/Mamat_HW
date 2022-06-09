@@ -55,7 +55,7 @@ bool IP::set_value(String mask){
 
 //makes a big ip integer out of ip_mask_components
 	for(int i=0;i<VALID_IP_COMP_SIZE;i++){
-		ip_mask =ip_mask+(ip_mask_components[i].to_integer() << (COMP_SIZE*(VALID_IP_COMP_SIZE-1-i)));
+		ip_mask += (unsigned int)(ip_mask_components[i].to_integer() << (COMP_SIZE*(VALID_IP_COMP_SIZE-1-i)));
 	}
 
 //makes a bits-mask
@@ -64,7 +64,7 @@ bool IP::set_value(String mask){
 
 //sets range
     min_ip = ip_mask & bits_mask;
-    max_ip = min_ip|(!bits_mask);
+    max_ip = ((min_ip)|(~bits_mask));
 
 	delete [] mask_components;
    	delete [] ip_mask_components;

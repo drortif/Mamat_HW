@@ -55,8 +55,9 @@ String& String::operator=(const String& rhs)
 
 String& String::operator=(const char* str)
 {
-	delete this->data;
-	this->data = strcpy(new char[strlen(str) +1], str);
+	delete[] this->data;
+	this->data = new char[strlen(str) +1];
+	strcpy(this->data, str);
 	this->length = strlen(str);
 	// TODO: insert return statement here
 	return *this;
@@ -102,33 +103,57 @@ void String::split(const char* delimiters, String** output, size_t* size) const
 
 	*output = new String[output_size+1];
 	
-	*size = 0;
+	char* tmp= strtok(this->data, delimiters);
+	size_t place=0;
+	
+	while(tmp!=NULL){
+	(*output)[place]=tmp;
+	tmp = strtok(NULL, delimiters);
+	place++;
+	}
+	
+	
+	*size=output_size;
+	
+/*	*size = 0;
 	size_t position = 0;
+	int i=0;
 	for (size_t j= 0; j < this->length; j++)
 	{
 		
-				String token;
+				//String token;
 				size_t pos = strcspn(&(this->data[position]),delimiters);
 				if (pos == this->length -position) {
 					break;
 				}
-				token.length = pos ;
-				strncpy(token.data, &(this->data[position]), token.length);
-				**output = token;
-				(*output)++;
-				(*size)++;
+				//token.length = pos;
+				//char *tmp = new char[token.length+1];
+				//tmp = {0};
+				//token = tmp;
+				//strncpy(token.data, &(this->data[position]), token.length);
+				char tmp[pos+1]= {0};
+				strncpy(tmp, &(this->data[position]), pos);
+				(*output)[i] = tmp;
+				(*output)[i].data[pos]= '\0';
+				// **output = token;
+				//(*output)++;
+				//(*size)++;
+				i++;
 				position += (pos + 1);
+				//delete[] tmp;
 			
 
 		
 	}
 	String last_token;
 	last_token.length = this->length - position;
+	last_token.data = new char[last_token.length+1];
 	strncpy(last_token.data, &(this->data[position]), last_token.length);
+	last_token.data[last_token.length]= '\0';
 	**output = (String(last_token));
 	(*output) -= (output_size-1);
 	(*size)++;
-	
+	*/
 				
 }
 
@@ -160,7 +185,9 @@ String String::trim() const
 	}
 	String a;
 	a.length = end - start + 1;
+	a.data = new char[a.length+1];
 	strncpy(a.data, start, a.length);
+	a.data[a.length]= '\0';
 	return a; 
 }
 		

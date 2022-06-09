@@ -16,7 +16,7 @@ int main(int argc, char **argv){
 	} 
 
     String rule(argv[1]);
-    String* rule_components;
+    String *rule_components;
     String rule_field_type;
     String rule_data;
     size_t rule_components_size=0;
