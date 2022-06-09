@@ -1,12 +1,13 @@
 #include <iostream>
 #include "port.h"
 
-#define MIN_PORT 0
-#define MAX_PORT 65535
-#define VALID_NUM_OF_BOUNDS 2
+const int MIN_PORT= 0;
+const int MAX_PORT= 65535;
+const int VALID_NUM_OF_BOUNDS= 2;
 
 //constructor implementation, only initiats. and destructor
-Port::Port(String field_type) : Field(field_type), min_port(MIN_PORT), max_port(MAX_PORT){}
+Port::Port(String field_type) : Field(field_type),
+ min_port(MIN_PORT), max_port(MAX_PORT){}
 
 Port::~Port(){}
 
@@ -28,7 +29,8 @@ bool Port::set_value(String ports_range){
     upper_bound=((bounds[1].trim()).to_integer());
 
 //check if bounds value is valid
-    if((lower_bound < 0) || (upper_bound > MAX_PORT) || (upper_bound < lower_bound)){
+    if((lower_bound < 0) || (upper_bound > MAX_PORT)
+     || (upper_bound < lower_bound)){
     	delete [] bounds;
         return false;
     }

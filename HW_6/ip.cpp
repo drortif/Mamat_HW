@@ -2,17 +2,17 @@
 #include <math.h>
 #include "ip.h"
 
-#define MIN_IP 0
-#define MAX_IP 0xFFFFFFFF
-#define VALID_MASK_SIZE 2 /* -1? */
-#define WORD_SIZE 32
-#define VALID_IP_COMP_SIZE 4
-#define COMP_SIZE 8
-
+const int MIN_IP = 0;
+const int MAX_IP =  0xFFFFFFFF;
+const int VALID_MASK_SIZE =  2; 
+const int WORD_SIZE =  32;
+const int VALID_IP_COMP_SIZE =  4;
+const int COMP_SIZE = 8;
 
 
 //constructor implementation, only initiats.
-IP::IP(String field_type) : Field(field_type), min_ip(MIN_IP), max_ip(MAX_IP){};
+IP::IP(String field_type) : Field(field_type),
+ min_ip(MIN_IP), max_ip(MAX_IP){};
 
 //destructor implementation?
 
@@ -46,8 +46,10 @@ bool IP::set_value(String mask){
         return false;
     }
 //splits ip part and checks if valid
-    (mask_components[0]).split(".", &(ip_mask_components), &(ip_mask_components_size));
-    if((ip_mask_components_size!=VALID_IP_COMP_SIZE) || (ip_mask_components==NULL)){
+    (mask_components[0]).split(".",
+     &(ip_mask_components), &(ip_mask_components_size));
+    if((ip_mask_components_size!=VALID_IP_COMP_SIZE)
+     || (ip_mask_components==NULL)){
     	delete [] mask_components;
     	delete [] ip_mask_components;
         return false;
@@ -55,7 +57,8 @@ bool IP::set_value(String mask){
 
 //makes a big ip integer out of ip_mask_components
 	for(int i=0;i<VALID_IP_COMP_SIZE;i++){
-		ip_mask += (unsigned int)(ip_mask_components[i].to_integer() << (COMP_SIZE*(VALID_IP_COMP_SIZE-1-i)));
+		ip_mask += (unsigned int)(ip_mask_components[i].to_integer() 
+		<< (COMP_SIZE*(VALID_IP_COMP_SIZE-1-i)));
 	}
 
 //makes a bits-mask
@@ -86,7 +89,8 @@ bool IP :: match_value(String ip_address) const{
     }
     
     for(int i=0;i<VALID_IP_COMP_SIZE;i++){
-		ip_value =ip_value+(ip_components[i].to_integer() << (COMP_SIZE*(VALID_IP_COMP_SIZE-1-i)));
+		ip_value =ip_value+(ip_components[i].to_integer() 
+		<< (COMP_SIZE*(VALID_IP_COMP_SIZE-1-i)));
 	}
 
 //returns true if in range

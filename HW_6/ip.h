@@ -6,9 +6,6 @@
 
  
 
-#define MIN_IP 0
-
-#define MAX_IP 0xFFFFFFFF
 
 
 

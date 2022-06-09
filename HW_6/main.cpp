@@ -7,7 +7,7 @@
 
 
 
-#define VALID_RULE_COMP 2
+const int VALID_RULE_COMP = 2;
 
 
 int main(int argc, char **argv){
@@ -23,20 +23,23 @@ int main(int argc, char **argv){
 //breaking the rule to its parts
     rule.split("=", &rule_components, &(rule_components_size));
 
-    	if ((rule_components_size!=VALID_RULE_COMP) || (rule_components==NULL)) {
+    	if ((rule_components_size!=VALID_RULE_COMP) ||
+    	 (rule_components==NULL)) {
     	delete [] rule_components;
 		return 0;
 	}
 	
     rule_field_type=(rule_components[0]).trim();
     rule_data=(rule_components[1]).trim();
-	if ((rule_field_type).equals("dst-port") || (rule_field_type).equals("src-port")){
+	if ((rule_field_type).equals("dst-port") ||
+	 (rule_field_type).equals("src-port")){
         Port rule_port(rule_field_type);
         rule_port.set_value(rule_data);
         parse_input(rule_port);
     }
 
-    	if ((rule_field_type).equals("dst-ip") || (rule_field_type).equals("src-ip")){
+    	if ((rule_field_type).equals("dst-ip") || 
+    	(rule_field_type).equals("src-ip")){
         IP rule_ip(rule_field_type);
         rule_ip.set_value(rule_data);
         parse_input(rule_ip);

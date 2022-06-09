@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <ctype.h>
 
-#define MAX_STR_LEN 80
+const int MAX_STR_LEN = 80;
 
 
 
@@ -113,48 +113,7 @@ void String::split(const char* delimiters, String** output, size_t* size) const
 	}
 	
 	
-	*size=output_size;
-	
-/*	*size = 0;
-	size_t position = 0;
-	int i=0;
-	for (size_t j= 0; j < this->length; j++)
-	{
-		
-				//String token;
-				size_t pos = strcspn(&(this->data[position]),delimiters);
-				if (pos == this->length -position) {
-					break;
-				}
-				//token.length = pos;
-				//char *tmp = new char[token.length+1];
-				//tmp = {0};
-				//token = tmp;
-				//strncpy(token.data, &(this->data[position]), token.length);
-				char tmp[pos+1]= {0};
-				strncpy(tmp, &(this->data[position]), pos);
-				(*output)[i] = tmp;
-				(*output)[i].data[pos]= '\0';
-				// **output = token;
-				//(*output)++;
-				//(*size)++;
-				i++;
-				position += (pos + 1);
-				//delete[] tmp;
-			
-
-		
-	}
-	String last_token;
-	last_token.length = this->length - position;
-	last_token.data = new char[last_token.length+1];
-	strncpy(last_token.data, &(this->data[position]), last_token.length);
-	last_token.data[last_token.length]= '\0';
-	**output = (String(last_token));
-	(*output) -= (output_size-1);
-	(*size)++;
-	*/
-				
+	*size=output_size;	
 }
 
 int String::to_integer() const
@@ -166,21 +125,16 @@ int String::to_integer() const
 
 String String::trim() const
 {
-	/*std::string a =this->data;
-	a.erase (0,a.find_first_not_of(" \t\n\r\v\f"));
-	a.erase(a.find_last_not_of(" \t\n\r\v\f")+1);
-	
-	char* str = new char[a.size()+1];
-	String b(str);
-	delete[]str;
-	return b;*/
+
 	char* start = this->data;
-	while (*start == ' ' ||*start == '\n'||*start == '\t'||*start == '\f'||*start == '\r'||*start == '\v')
+	while (*start == ' ' ||*start == '\n'||*start == '\t'||
+	*start == '\f'||*start == '\r'||*start == '\v')
 	{
 		start++;
 	}
 	char* end = this->data+this->length -1; 
-	while (*end == ' ' ||*end == '\n'||*end == '\t'||*end == '\f'||*end == '\r'||*end == '\v') {
+	while (*end == ' ' ||*end == '\n'||*end == '\t'||
+	*end == '\f'||*end == '\r'||*end == '\v') {
 		end--;
 	}
 	String a;
